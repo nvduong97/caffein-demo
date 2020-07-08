@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="LOG_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${hostName} --- [%15.15t] %-40.40c{1.} : %m%n%ex
+        </Property>
+    </Properties>
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
+            <!--            <JSONLayout compact="true" eventEol="true" stacktraceAsString="true" properties="true"/>-->
+            <JSONLayout compact="true" eventEol="true" includeStacktrace="true" locationInfo="true"
+                        stacktraceAsString="true" properties="true"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <RollingFile name="InfoLogger" fileName="./logs/info-log4j2.log"
+                     filePattern="./logs/$${date:yyyy-MM}/info-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz">
+            <JSONLayout compact="true" eventEol="true" stacktraceAsString="true" properties="true"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="100MB" />
+                <TimeBasedTriggeringPolicy interval="1" />
+            </Policies>
+            <ThresholdFilter level="INFO"/>
+        </RollingFile>
+        <RollingFile name="ErrorLogger"
+                     fileName="./logs/error-log4j2.log"
+                     filePattern="./logs/$${date:yyyy-MM}/error-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz">
+            <JSONLayout compact="true" eventEol="true" stacktraceAsString="true" properties="true"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="100MB" />
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+            <ThresholdFilter level="ERROR"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.example.demo" level="trace" additivity="false">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="InfoLogger"/>
+            <AppenderRef ref="ErrorLogger"/>
+        </Logger>
+
+        <Root level="info">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="InfoLogger"/>
+            <AppenderRef ref="ErrorLogger"/>
+        </Root>
+    </Loggers>
+</Configuration>
